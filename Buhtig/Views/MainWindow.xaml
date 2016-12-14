@@ -1,0 +1,192 @@
+﻿<telerik:RadRibbonWindow x:Class="Buhtig.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        xmlns:strings="clr-namespace:Buhtig.Resources.Strings"
+        xmlns:converters="clr-namespace:Buhtig.Converters"
+        mc:Ignorable="d"
+        d:DesignWidth="1280" d:DesignHeight="720">
+    <telerik:RadRibbonWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Templates/TeamTemplate.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:UserCommitsConverter x:Key="CommitsConverter"/>
+        </ResourceDictionary>
+    </telerik:RadRibbonWindow.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <telerik:RadRibbonView x:Name="RibbonView" Grid.Row="0" 
+                               ApplicationName="{x:Static strings:Language.AppName}" MinimizeButtonVisibility="Visible">
+            <telerik:RadRibbonTab Header="{x:Static strings:Language.Operations}">
+                <telerik:RadRibbonGroup Header="{x:Static strings:Language.WorkSpace}">
+                    <telerik:RadRibbonButton Content="{x:Static strings:Language.WorkSpaceLoad}"
+                                             VerticalContentAlignment="Center"
+                                             Size="Large" LargeImage="/Resources/Icons/FileOpen.png"
+                                             Click="WorkSpaceLoad_OnClick"/>
+                    <telerik:RadRibbonButton Content="{x:Static strings:Language.WorkSpaceSave}"
+                                             VerticalContentAlignment="Center"
+                                             Size="Large" LargeImage="/Resources/Icons/FileSave.png"
+                                             Click="WorkSpaceSave_OnClick" />
+                </telerik:RadRibbonGroup>
+                <telerik:RadRibbonGroup Header="{x:Static strings:Language.Repositories}">
+                    <telerik:RadRibbonButton Content="{x:Static strings:Language.ManualImport}" 
+                                             VerticalContentAlignment="Center"
+                                             Size="Large" LargeImage="/Resources/Icons/Import.png"
+                                             Click="ManualImport_OnClick" />
+                    <telerik:RadRibbonButton Content="{x:Static strings:Language.BatchImport}" 
+                                             VerticalContentAlignment="Center"
+                                             Size="Large" LargeImage="/Resources/Icons/BatchImport.png"/>
+                </telerik:RadRibbonGroup>
+            </telerik:RadRibbonTab>
+        </telerik:RadRibbonView>
+        <telerik:RadDocking Grid.Row="1">
+            <telerik:RadDocking.DocumentHost>
+                <telerik:RadSplitContainer>
+                    <telerik:RadPaneGroup>
+                        <telerik:RadPane Header="{x:Static strings:Language.Commits}" CanUserClose="False">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="3*"/>
+                                    <RowDefinition Height="2*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="1.5*"/>
+                                </Grid.ColumnDefinitions>
+                                <telerik:RadGridView x:Name="CommitsView" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                                     ItemsSource="{Binding SelectedItem, ElementName=TeamView, Mode=OneWay, Converter={StaticResource CommitsConverter}}"
+                                                     AutoGenerateColumns="False" IsReadOnly="True"
+                                                     CanUserDeleteRows="False" SelectionMode="Single">
+                                    <telerik:RadGridView.Columns>
+                                        <telerik:GridViewDataColumn Width="*" DataMemberBinding="{Binding ShaShort, Mode=OneTime}" Header="{x:Static strings:Language.ShaShort}" />
+                                        <telerik:GridViewDataColumn Width="3*" DataMemberBinding="{Binding MessageShort, Mode=OneTime}" Header="{x:Static strings:Language.Message}" />
+                                        <telerik:GridViewDataColumn Width="*" DataMemberBinding="{Binding Author, Mode=OneTime}" Header="{x:Static strings:Language.Author}" />
+                                        <telerik:GridViewDataColumn Width="*" DataMemberBinding="{Binding Time, Mode=OneTime}" Header="{x:Static strings:Language.Time}" />
+                                        <telerik:GridViewDataColumn Width="100" DataMemberBinding="{Binding TimeEstimated, Mode=OneTime}" Header="{x:Static strings:Language.Estimated}" />
+                                    </telerik:RadGridView.Columns>
+                                </telerik:RadGridView>
+                                <telerik:RadPropertyGrid Grid.Row="2" Grid.Column="0"
+                                                         IsReadOnly="True" ReadOnlyEditorState="ReadOnly"
+                                                         AutoGeneratePropertyDefinitions="False"
+                                                         DescriptionPanelVisibility="Collapsed"
+                                                         LabelColumnWidth="100"
+                                                         Item="{Binding SelectedItem, ElementName=CommitsView, Mode=OneWay}">
+                                    <telerik:RadPropertyGrid.PropertyDefinitions>
+                                        <telerik:PropertyDefinition Binding="{Binding Sha, Mode=OneTime}" DisplayName="{x:Static strings:Language.Sha}"/>
+                                        <telerik:PropertyDefinition Binding="{Binding ShaShort, Mode=OneTime}" DisplayName="{x:Static strings:Language.ShaShort}"/>
+                                        <telerik:PropertyDefinition Binding="{Binding Time, Mode=OneTime}" DisplayName="{x:Static strings:Language.Time}"/>
+                                        <telerik:PropertyDefinition Binding="{Binding TimeOriginal, Mode=OneTime}" DisplayName="{x:Static strings:Language.TimeOriginal}"/>
+                                        <telerik:PropertyDefinition Binding="{Binding TimeEstimated, Mode=OneTime}" DisplayName="{x:Static strings:Language.Estimated}"/>
+                                        <telerik:PropertyDefinition Binding="{Binding MinTime, Mode=OneTime}" DisplayName="{x:Static strings:Language.MinTime}"/>
+                                        <telerik:PropertyDefinition Binding="{Binding MaxTime, Mode=OneTime}" DisplayName="{x:Static strings:Language.MaxTime}"/>
+                                        <telerik:PropertyDefinition Binding="{Binding Author, Mode=OneTime}" DisplayName="{x:Static strings:Language.Author}"/>
+                                        <telerik:PropertyDefinition Binding="{Binding MessageShort, Mode=OneTime}" DisplayName="{x:Static strings:Language.MessageShort}"/>
+                                        <telerik:PropertyDefinition Binding="{Binding Message, Mode=OneTime}" DisplayName="{x:Static strings:Language.Message}"/>
+                                    </telerik:RadPropertyGrid.PropertyDefinitions>
+                                </telerik:RadPropertyGrid>
+                                <telerik:RadGridView Grid.Row="2" Grid.Column="1"
+                                                     AutoGenerateColumns="False" IsReadOnly="True"
+                                                     CanUserDeleteRows="False" SelectionMode="Single"
+                                                     ItemsSource="{Binding SelectedItem.ChangesList, ElementName=CommitsView, Mode=OneWay}">
+                                    <telerik:RadGridView.Columns>
+                                        <telerik:GridViewDataColumn Width="*" DataMemberBinding="{Binding Parent.ShaShort, Mode=OneTime}"
+                                                                    Header="Parent" />
+                                        <telerik:GridViewDataColumn Width="2.5*" DataMemberBinding="{Binding NewBlob.Path, Mode=OneTime}"
+                                                                    Header="File Path" />
+                                        <telerik:GridViewDataColumn Width="*" DataMemberBinding="{Binding Summary.Status, Mode=OneTime}"
+                                                                    Header="Status" />
+                                        <telerik:GridViewDataColumn Width="*" DataMemberBinding="{Binding Summary.LinesAdded, Mode=OneTime}"
+                                                                    Header="Lines Added" />
+                                        <telerik:GridViewDataColumn Width="*" DataMemberBinding="{Binding Summary.LinesDeleted, Mode=OneTime}"
+                                                                    Header="Lines Deleted" />
+                                        <telerik:GridViewDataColumn Width="*" DataMemberBinding="{Binding Framework, Mode=OneTime}"
+                                                                    Header="Framework" />
+                                    </telerik:RadGridView.Columns>
+                                </telerik:RadGridView>
+                            </Grid>
+                        </telerik:RadPane>
+                        <telerik:RadPane Header="{x:Static strings:Language.Charts}" CanUserClose="False">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="30"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="30"/>
+                                </Grid.ColumnDefinitions>
+                                <telerik:RadCartesianChart Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
+                                    <telerik:RadCartesianChart.HorizontalAxis>
+                                        <telerik:DateTimeContinuousAxis LabelFormat="yyyy-MM-dd HH:mm:ss"
+                                                                        SmartLabelsMode="SmartStep" PlotMode="OnTicksPadded"/>
+                                    </telerik:RadCartesianChart.HorizontalAxis>
+                                    <telerik:RadCartesianChart.VerticalAxis>
+                                        <telerik:LinearAxis SmartLabelsMode="SmartStepAndRange"/>
+                                    </telerik:RadCartesianChart.VerticalAxis>
+                                    <telerik:RadCartesianChart.Series>
+                                        <telerik:AreaSeries x:Name="CodeLinesSeries"/>
+                                    </telerik:RadCartesianChart.Series>
+                                    <telerik:RadCartesianChart.Behaviors>
+                                        <telerik:ChartPanAndZoomBehavior ZoomMode="Horizontal"/>
+                                    </telerik:RadCartesianChart.Behaviors>
+                                </telerik:RadCartesianChart>
+                                <telerik:RadCartesianChart Grid.Row="3" Grid.Column="1">
+                                    <telerik:RadCartesianChart.HorizontalAxis>
+                                        <telerik:DateTimeContinuousAxis LabelFormat="yyyy-MM-dd"
+                                                                        SmartLabelsMode="SmartStep" PlotMode="OnTicksPadded"/>
+                                    </telerik:RadCartesianChart.HorizontalAxis>
+                                    <telerik:RadCartesianChart.VerticalAxis>
+                                        <telerik:LinearAxis SmartLabelsMode="SmartStepAndRange"/>
+                                    </telerik:RadCartesianChart.VerticalAxis>
+                                    <telerik:RadCartesianChart.Series>
+                                        <telerik:BarSeries x:Name="CommitSeries"/>
+                                    </telerik:RadCartesianChart.Series>
+                                </telerik:RadCartesianChart>
+                                <telerik:RadPieChart Grid.Row="3" Grid.Column="3"
+                                                     Palette="Windows8">
+                                    <telerik:RadPieChart.Series>
+                                        <telerik:PieSeries x:Name="ContributionSeries" ShowLabels="True">
+                                            <telerik:PieSeries.LabelConnectorsSettings>
+                                                <telerik:ChartSeriesLabelConnectorsSettings/>
+                                            </telerik:PieSeries.LabelConnectorsSettings>
+                                        </telerik:PieSeries>
+                                    </telerik:RadPieChart.Series>
+                                    <telerik:RadPieChart.SmartLabelsStrategy>
+                                        <telerik:PieChartSmartLabelsStrategy DisplayMode="Spider"/>
+                                    </telerik:RadPieChart.SmartLabelsStrategy>
+                                </telerik:RadPieChart>
+                            </Grid>
+                        </telerik:RadPane>
+                        <telerik:RadPane Header="Collaboration" CanUserClose="False" Activated="CollaborationPane_OnActivated">
+                            <telerik:RadDiagram x:Name="CollaborationDiagram"/>
+                        </telerik:RadPane>
+                    </telerik:RadPaneGroup>
+                </telerik:RadSplitContainer>
+            </telerik:RadDocking.DocumentHost>
+            <telerik:RadSplitContainer InitialPosition="DockedLeft">
+                <telerik:RadPaneGroup>
+                    <telerik:RadPane Header="Teams"
+                                     IsPinned="True" CanUserClose="False" CanFloat="False">
+                        <telerik:RadTreeView x:Name="TeamView"
+                                             ItemsSource="{Binding TeamStorage.Teams, Mode=OneWay}"
+                                             ItemTemplate="{StaticResource TeamTemplate}"
+                                             Selected="TeamView_OnSelected"/>
+                    </telerik:RadPane>
+                </telerik:RadPaneGroup>
+            </telerik:RadSplitContainer>
+        </telerik:RadDocking>
+    </Grid>
+</telerik:RadRibbonWindow>

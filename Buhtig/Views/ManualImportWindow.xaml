@@ -1,0 +1,88 @@
+﻿<Window x:Class="Buhtig.Views.ManualImportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:strings="clr-namespace:Buhtig.Resources.Strings"
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        xmlns:converters="clr-namespace:Buhtig.Converters"
+        mc:Ignorable="d"
+        Title="ManualImportWindow"
+        Height="360" Width="640" ResizeMode="NoResize">
+    <Window.Resources>
+        <converters:TeamNotNullConverter x:Key="TeamNotNullConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="70"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"
+                       Text="{x:Static strings:Language.RepositoryUrl}"/>
+            <TextBox x:Name="RepositoryUrl" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"
+                     Text="{Binding Team.Repo.RemoteUri, Mode=OneWay}"/>
+            <Button Grid.Row="0" Grid.Column="4" Content="{x:Static strings:Language.Clone}"
+                    Click="Clone_OnClick"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"
+                       Text="{x:Static strings:Language.LocalPath}"/>
+            <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center"
+                     Text="{Binding Team.Repo.LocalPath, Mode=OneWay}"></TextBlock>
+            <Button Grid.Row="2" Grid.Column="4" Content="{x:Static strings:Language.Browse}"
+                    Click="Browse_OnClick"/>
+        </Grid>
+        <telerik:RadTabControl Grid.Row="1">
+            <telerik:RadTabControl.Items>
+                <telerik:RadTabItem Header="{x:Static strings:Language.TeamInfo}">
+                    <telerik:RadPropertyGrid Item="{Binding Team, Mode=OneWay}"
+                                             AutoGeneratePropertyDefinitions="False"
+                                             DescriptionPanelVisibility="Collapsed">
+                        <telerik:RadPropertyGrid.PropertyDefinitions>
+                            <telerik:PropertyDefinition Binding="{Binding TeamName}"
+                                                        DisplayName="{x:Static strings:Language.TeamName}"/>
+                            <telerik:PropertyDefinition Binding="{Binding ProjectName}"
+                                                        DisplayName="{x:Static strings:Language.ProjectName}"/>
+                        </telerik:RadPropertyGrid.PropertyDefinitions>
+                    </telerik:RadPropertyGrid>
+                </telerik:RadTabItem>
+                <telerik:RadTabItem Header="{x:Static strings:Language.Members}">
+                    <telerik:RadGridView AutoGenerateColumns="False" IsReadOnly="False"
+                                         CanUserDeleteRows="False" ItemsSource="{Binding Team.Members, Mode=OneWay}">
+                        <telerik:RadGridView.Columns>
+                            <telerik:GridViewDataColumn Width="*" DataMemberBinding="{Binding GitName, Mode=OneTime}"
+                                                        Header="{x:Static strings:Language.GitName}" IsReadOnly="True" />
+                            <telerik:GridViewDataColumn Width="*" DataMemberBinding="{Binding GitEmail, Mode=OneTime}"
+                                                        Header="{x:Static strings:Language.GitEmail}" IsReadOnly="True" />
+                            <telerik:GridViewDataColumn Width="*" DataMemberBinding="{Binding StudentNumber, Mode=TwoWay}"
+                                                        Header="{x:Static strings:Language.StudentNumber}" />
+                            <telerik:GridViewDataColumn Width="*" DataMemberBinding="{Binding Name, Mode=TwoWay}"
+                                                        Header="{x:Static strings:Language.Name}" />
+                            <telerik:GridViewDataColumn Width="*" DataMemberBinding="{Binding Mobile, Mode=TwoWay}"
+                                                        Header="{x:Static strings:Language.Mobile}" />
+                        </telerik:RadGridView.Columns>
+                    </telerik:RadGridView>
+                </telerik:RadTabItem>
+            </telerik:RadTabControl.Items>
+        </telerik:RadTabControl>
+        <Button Grid.Row="3" Content="{x:Static strings:Language.Import}"
+                IsEnabled="{Binding Team, Mode=OneWay, Converter={StaticResource TeamNotNullConverter}}"
+                Click="Import_OnClick"/>
+        <telerik:RadBusyIndicator x:Name="BusyIndicator"
+                                  Grid.Row="0" Grid.RowSpan="4" IsBusy="False"
+                                  BusyContent="{x:Static strings:Language.Cloning}"/>
+    </Grid>
+</Window>
