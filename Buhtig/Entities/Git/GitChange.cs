@@ -142,6 +142,20 @@ namespace Buhtig.Entities.Git
             }
         }
 
+        private bool _merge;
+
+        [JsonProperty(PropertyName = "merge")]
+        public bool Merge
+        {
+            get { return _merge; }
+            set
+            {
+                if (_merge == value) return;
+                _merge = value;
+                OnPropertyChanged();
+            }
+        }
+
         public GitChange(GitCommit parent, GitCommit commit, PatchEntryChanges patchEntryChanges, Student author)
         {
             Id = Guid.NewGuid();
@@ -153,6 +167,8 @@ namespace Buhtig.Entities.Git
                 patchEntryChanges.LinesDeleted);
             OldBlob = new GitChangeBlob(patchEntryChanges.OldOid, patchEntryChanges.OldPath, patchEntryChanges.OldMode);
             NewBlob = new GitChangeBlob(patchEntryChanges.Oid, patchEntryChanges.Path, patchEntryChanges.Mode);
+
+            Merge = commit.InnerCommit.Parents.Count() > 1;
 
             var lowerPatch = patchEntryChanges.Patch.ToLower();
             if (lowerPatch.Contains(StaticConfigs.CopiedCriteria))

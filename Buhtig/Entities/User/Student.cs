@@ -156,6 +156,7 @@ namespace Buhtig.Entities.User
                     foreach (var change in changeList)
                     {
                         if (change.Framework) continue;
+                        if (change.Merge) continue;
                         linesAdded += change.Summary.LinesAdded;
                         linesDeleted += change.Summary.LinesDeleted;
                     }

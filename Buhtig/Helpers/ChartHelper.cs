@@ -32,7 +32,7 @@ namespace Buhtig.Helpers
             {
                 codeSum +=
                     commit.Changes.Values.Sum(
-                        cL => cL.Where(c => !c.Framework).Sum(c => c.Summary.LinesAdded - c.Summary.LinesDeleted));
+                        cL => cL.Where(c => !c.Framework && !c.Merge).Sum(c => c.Summary.LinesAdded - c.Summary.LinesDeleted));
                 dataPoints.Add(new CategoricalDataPoint { Category = commit.Time, Value = codeSum });
             }
             return dataPoints;

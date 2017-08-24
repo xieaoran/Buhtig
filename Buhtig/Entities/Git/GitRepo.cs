@@ -191,13 +191,13 @@ namespace Buhtig.Entities.Git
                 Branches.Add(new GitBranch(this, innerBranch));
             }
 
-            var initialCommit = Commits.First(c => c.Changes.Keys.Contains(RuntimeRoot.CommitRoot));
-            FixMinTime(initialCommit, initialCommit.Time);
+            //var initialCommit = Commits.First(c => c.Changes.Keys.Contains(RuntimeRoot.CommitRoot));
+            //FixMinTime(initialCommit, initialCommit.Time);
 
-            var lastCommit = Commits.First(c => !c.Children.Any());
-            FixMaxTime(lastCommit, lastCommit.Time);
+            //var lastCommit = Commits.First(c => !c.Children.Any());
+            //FixMaxTime(lastCommit, lastCommit.Time);
 
-            EstimateTime(initialCommit);
+            //EstimateTime(initialCommit);
 
             var unsortedCommits = Commits;
             Commits = new ObservableCollection<GitCommit>(unsortedCommits.OrderBy(c => c.Time));
@@ -211,6 +211,7 @@ namespace Buhtig.Entities.Git
                     foreach (var change in changeList)
                     {
                         if (change.Framework) continue;
+                        if (change.Merge) continue;
                         LinesAdded += change.Summary.LinesAdded;
                         LinesDeleted += change.Summary.LinesDeleted;
                     }
